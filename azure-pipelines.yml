@@ -1,0 +1,46 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: SelfHosted
+
+stages:
+- stage: CI
+  displayName: CI Front & Back
+  jobs:
+  - job: Front
+    displayName: Build Front (Vite)
+    steps:
+    - script: node -v && npm -v
+      displayName: Check Node/NPM
+    - script: |
+        cd front
+        npm ci
+        npm run build
+      displayName: npm ci & build (front)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'front/dist'
+        ArtifactName: 'front-dist'
+        publishLocation: 'Container'
+      displayName: Publicar artefacto front (dist)
+
+  - job: Back
+    displayName: Build Back (Node)
+    steps:
+    - script: node -v && npm -v
+      displayName: Check Node/NPM
+    - script: |
+        cd back
+        npm ci
+        npm test
+        npm run build
+      displayName: test & build (back)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'back/bin'
+        ArtifactName: 'back-bin'
+        publishLocation: 'Container'
+      displayName: Publicar artefacto back (bin)
