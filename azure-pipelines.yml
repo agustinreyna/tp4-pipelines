@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  name: SelfHosted
+  name: SelfHosted   # <- Usar tu agente propio
 
 stages:
 - stage: CI
@@ -14,37 +14,58 @@ stages:
     displayName: Build Front (Vite)
     steps:
     - checkout: self
+
     - task: NodeTool@0
+      displayName: Use Node 20.x
       inputs:
         versionSpec: '20.x'
+        checkLatest: true
+
     - script: |
-        npm ci
-        npm run build
-      workingDirectory: front
-      displayName: build front
+        node -v
+        npm -v
+      displayName: Check Node/NPM
+
+    - task: PowerShell@2
+      displayName: Install & Build (front)
+      inputs:
+        targetType: 'inline'
+        workingDirectory: 'front'
+        script: |
+          Write-Host "== PWD =="; Get-Location
+          if (!(Test-Path ".\index.html")) {
+            throw "No se encontró front\index.html. Crealo o configurá Vite (rollup input/lib)."
+          }
+
+          Write-Host "== npm ci =="; npm ci
+          Write-Host "== vite build =="; npx vite build --logLevel info
+
+          if (!(Test-Path ".\dist")) {
+            throw "dist NO existe tras el build."
+          }
+          Write-Host "== dist listo =="; Get-ChildItem -Path ".\dist" -Recurse
+
     - task: PublishBuildArtifacts@1
+      displayName: Publicar artefacto front (dist)
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\front\dist'
         ArtifactName: 'front-dist'
         publishLocation: 'Container'
-      displayName: publish front
 
   - job: Back
     displayName: Build Back (Node)
     steps:
-    - checkout: self
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '20.x'
+    - script: node -v && npm -v
+      displayName: Check Node/NPM
     - script: |
+        cd back
         npm ci
         npm test
         npm run build
-      workingDirectory: back
-      displayName: build back
+      displayName: test & build (back)
     - task: PublishBuildArtifacts@1
+      displayName: Publicar artefacto back (bin)
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\back\bin'
+        PathtoPublish: 'back/bin'
         ArtifactName: 'back-bin'
         publishLocation: 'Container'
-      displayName: publish back
