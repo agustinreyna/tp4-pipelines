@@ -34,18 +34,12 @@ Pasos: check node/npm → npm ci → npm test → npm run build.
 
 Artefacto publicado: back-bin (contenido de /back/bin).
 
-Características clave:
-
--> Agente Self-Hosted: el pipeline corre en el pool SelfHosted, usando un agente instalado como servicio en la PC local (Agente-Servicio).
--> Artefactos: se publican dos paquetes separados (front y back), permitiendo validar y distribuir cada parte de forma independiente dentro de la misma ejecución de CI.
--> Paralelismo: los jobs del stage pueden ejecutarse en paralelo si hay más de un agente online en el pool; con un único agente, quedan encolados y se ejecutan en serie automáticamente.
-
 3) Evidencias
 
 ![Pool](evidencias/evidencia1.jpg)
 
-![Agente](evidencias/evidencia1.jpg)
+![Agente](evidencias/evidencia2.jpg)
 
-![Run](evidencias/evidencia1.jpg)
+![Run](evidencias/evidencia3.jpg)
 
-![Artefactos publicados](evidencias/evidencia1.jpg)
+![Artefactos publicados](evidencias/evidencia4.jpg)
