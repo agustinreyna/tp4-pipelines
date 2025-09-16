@@ -1,0 +1,12 @@
+[2025-09-16 02:18:42Z INFO AgentProcess] Agent package win-x64.
+[2025-09-16 02:18:42Z INFO AgentProcess] Running on Windows (X64).
+[2025-09-16 02:18:42Z INFO AgentProcess] RuntimeInformation: Microsoft Windows 10.0.26100.
+[2025-09-16 02:18:42Z INFO AgentProcess] Version: 4.261.0
+[2025-09-16 02:18:42Z INFO AgentProcess] Commit: 45f3f01c6d914d3e7d326f2e3d91aedd33886883
+[2025-09-16 02:18:42Z INFO AgentProcess] Culture: es-ES
+[2025-09-16 02:18:42Z INFO AgentProcess] UI Culture: es-ES
+[2025-09-16 02:18:42Z INFO HostContext] Well known directory 'Bin': 'C:\Users\areyna\Desktop\facultad\ing sw 3\tp4\vsts-agent-win-x64-4.261.0\bin'
+[2025-09-16 02:18:42Z INFO HostContext] Well known directory 'Root': 'C:\Users\areyna\Desktop\facultad\ing sw 3\tp4\vsts-agent-win-x64-4.261.0'
+[2025-09-16 02:18:42Z INFO AgentProcess] Validating directory permissions for: 'C:\Users\areyna\Desktop\facultad\ing sw 3\tp4\vsts-agent-win-x64-4.261.0'
+[2025-09-16 02:18:42Z ERR  Terminal] WRITE ERROR: Se ha producido un error: Se requiere permiso para leer el contenido del directorio para 'C:\Users\areyna\Desktop\facultad\ing sw 3\tp4\vsts-agent-win-x64-4.261.0' y cada directorio en la jerarquía. Access to the path 'C:\Users\areyna\Desktop\facultad\ing sw 3\tp4' is denied.
+[2025-09-16 02:18:42Z ERR  AgentProcess] Directory permission validation failed - insufficient permissions
