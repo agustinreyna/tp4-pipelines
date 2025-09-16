@@ -1,8 +1,0 @@
-﻿{
-  "agentId": 9,
-  "agentName": "Agente-Local",
-  "poolId": 10,
-  "poolName": "SelfHosted",
-  "serverUrl": "https://dev.azure.com/reynaagustin2003/",
-  "workFolder": "_work"
-}
