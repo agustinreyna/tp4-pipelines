@@ -15,11 +15,18 @@ stages:
     steps:
     - checkout: self
 
-    - script: echo "MARKER v5 - $(Build.SourceVersion)"
-      displayName: Marker
+    # Usa Node 20.x para Vite 7
+    - task: NodeTool@0
+      displayName: Use Node 20.x
+      inputs:
+        versionSpec: '20.x'
+        checkLatest: true
 
-    - script: node -v && npm -v
-      displayName: Check Node/NPM
+    - script: |
+        node -v
+        npm -v
+        npx vite --version
+      displayName: Check Node/NPM/Vite
 
     - script: |
         npm ci
@@ -29,26 +36,18 @@ stages:
       workingDirectory: front
       displayName: install & build (front)
 
-    # (opcional) para verificar dónde quedó dist
+    # (opcional) falla si no existe dist
     - powershell: |
-        Write-Host "Sources: $(Build.SourcesDirectory)"
-        Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Depth 2
-      displayName: Verificar estructura
-
-    - task: CopyFiles@2
-      displayName: Copiar dist a staging
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\front\dist'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\front-dist'
+        $src = "$(Build.SourcesDirectory)\front\dist"
+        if (!(Test-Path $src)) { throw "dist NO existe; revisa build" }
+      displayName: Verificar dist
 
     - task: PublishBuildArtifacts@1
       displayName: Publicar artefacto front (dist)
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\front-dist'
+        PathtoPublish: '$(Build.SourcesDirectory)\front\dist'
         ArtifactName: 'front-dist'
         publishLocation: 'Container'
-
 
   - job: Back
     displayName: Build Back (Node)
