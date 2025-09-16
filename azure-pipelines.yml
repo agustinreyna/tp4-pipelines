@@ -14,10 +14,13 @@ stages:
     displayName: Build Front (Vite)
     steps:
     - checkout: self
+
     - script: echo "MARKER v5 - $(Build.SourceVersion)"
       displayName: Marker
+
     - script: node -v && npm -v
       displayName: Check Node/NPM
+
     - script: |
         npm ci
         npm run build
@@ -25,18 +28,27 @@ stages:
         dir dist
       workingDirectory: front
       displayName: install & build (front)
+
+    # (opcional) para verificar dónde quedó dist
+    - powershell: |
+        Write-Host "Sources: $(Build.SourcesDirectory)"
+        Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -Depth 2
+      displayName: Verificar estructura
+
     - task: CopyFiles@2
       displayName: Copiar dist a staging
       inputs:
-        SourceFolder: 'front/dist'
+        SourceFolder: '$(Build.SourcesDirectory)\front\dist'
         Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/front-dist'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\front-dist'
+
     - task: PublishBuildArtifacts@1
       displayName: Publicar artefacto front (dist)
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/front-dist'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\front-dist'
         ArtifactName: 'front-dist'
         publishLocation: 'Container'
+
 
   - job: Back
     displayName: Build Back (Node)
