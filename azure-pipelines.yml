@@ -15,7 +15,7 @@ stages:
     steps:
     - checkout: self
 
-    # Usa Node 20.x para Vite 7
+    # Asegura Node 20.x (recomendado para Vite 7)
     - task: NodeTool@0
       displayName: Use Node 20.x
       inputs:
@@ -25,22 +25,13 @@ stages:
     - script: |
         node -v
         npm -v
-        npx vite --version
-      displayName: Check Node/NPM/Vite
+      displayName: Check Node/NPM
 
     - script: |
         npm ci
         npm run build
-        dir
-        dir dist
       workingDirectory: front
       displayName: install & build (front)
-
-    # (opcional) falla si no existe dist
-    - powershell: |
-        $src = "$(Build.SourcesDirectory)\front\dist"
-        if (!(Test-Path $src)) { throw "dist NO existe; revisa build" }
-      displayName: Verificar dist
 
     - task: PublishBuildArtifacts@1
       displayName: Publicar artefacto front (dist)
