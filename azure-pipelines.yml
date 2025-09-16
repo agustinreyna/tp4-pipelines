@@ -4,42 +4,39 @@ trigger:
       - main
 
 pool:
-  name: SelfHosted
+  name: SelfHosted   # <- Usar tu agente propio
 
 stages:
 - stage: CI
   displayName: CI Front & Back
   jobs:
   - job: Front
-    displayName: Build Front (Vite)   
-    pool:
-      vmImage: 'ubuntu-latest'
+    displayName: Build Front (Vite)
     steps:
-      - checkout: self
-      - script: echo "MARKER v5 - $(Build.SourceVersion)"
-        displayName: Marker
-      - script: node -v && npm -v
-        displayName: Check Node/NPM
-      - script: |
-          npm ci
-          npm run build
-          ls -la
-          ls -la dist
-        workingDirectory: front
-        displayName: install & build (front)
-      - task: CopyFiles@2
-        displayName: Copiar dist a staging
-        inputs:
-          SourceFolder: 'front/dist'
-          Contents: '**'
-          TargetFolder: '$(Build.ArtifactStagingDirectory)/front-dist'
-      - task: PublishBuildArtifacts@1
-        displayName: Publicar artefacto front (dist)
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)/front-dist'
-          ArtifactName: 'front-dist'
-          publishLocation: 'Container'
-
+    - checkout: self
+    - script: echo "MARKER v5 - $(Build.SourceVersion)"
+      displayName: Marker
+    - script: node -v && npm -v
+      displayName: Check Node/NPM
+    - script: |
+        npm ci
+        npm run build
+        dir
+        dir dist
+      workingDirectory: front
+      displayName: install & build (front)
+    - task: CopyFiles@2
+      displayName: Copiar dist a staging
+      inputs:
+        SourceFolder: 'front/dist'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/front-dist'
+    - task: PublishBuildArtifacts@1
+      displayName: Publicar artefacto front (dist)
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/front-dist'
+        ArtifactName: 'front-dist'
+        publishLocation: 'Container'
 
   - job: Back
     displayName: Build Back (Node)
@@ -53,8 +50,8 @@ stages:
         npm run build
       displayName: test & build (back)
     - task: PublishBuildArtifacts@1
+      displayName: Publicar artefacto back (bin)
       inputs:
         PathtoPublish: 'back/bin'
         ArtifactName: 'back-bin'
         publishLocation: 'Container'
-      displayName: Publicar artefacto back (bin)
