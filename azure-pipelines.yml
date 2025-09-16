@@ -11,23 +11,35 @@ stages:
   displayName: CI Front & Back
   jobs:
   - job: Front
-    displayName: Build Front (Vite)
-    steps:
-    - script: node -v && npm -v
-      displayName: Check Node/NPM
-    - script: |
-        cd front
-        npm install
-        npm run build
-        dir
-        dir dist
-      displayName: install & build (front)
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: 'front/dist'   
-        ArtifactName: 'front-dist'
-        publishLocation: 'Container'
-      displayName: Publicar artefacto front (dist)
+  displayName: Build Front (Vite)
+  pool:
+    vmImage: 'ubuntu-latest'   # puedes cambiar a windows-latest si prefieres
+  steps:
+  - checkout: self
+  - script: echo "MARKER v5 - $(Build.SourceVersion)"
+    displayName: Marker
+  - script: node -v && npm -v
+    displayName: Check Node/NPM
+  - script: |
+      npm ci
+      npm run build
+      ls -la
+      ls -la dist
+    workingDirectory: front        # 👈 importante, así no necesitas cd
+    displayName: install & build (front)
+  - task: CopyFiles@2
+    displayName: Copiar dist a staging
+    inputs:
+      SourceFolder: 'front/dist'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/front-dist'
+  - task: PublishBuildArtifacts@1
+    displayName: Publicar artefacto front (dist)
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/front-dist'
+      ArtifactName: 'front-dist'
+      publishLocation: 'Container'
+
 
   - job: Back
     displayName: Build Back (Node)
