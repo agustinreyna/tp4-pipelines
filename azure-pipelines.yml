@@ -17,26 +17,29 @@ stages:
       displayName: Check Node/NPM
     - script: |
         cd front
-        npm ci
+        npm install
         npm run build
-      displayName: npm ci & build (front)
+        dir
+        dir dist
+      displayName: install & build (front)
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: 'front/dist'
+        PathtoPublish: 'front/dist'   # es relativo a $(Build.SourcesDirectory)
         ArtifactName: 'front-dist'
         publishLocation: 'Container'
       displayName: Publicar artefacto front (dist)
 
-  - job: Back
+    - job: Back
     displayName: Build Back (Node)
     steps:
     - script: node -v && npm -v
       displayName: Check Node/NPM
     - script: |
         cd back
-        npm ci
+        npm install
         npm test
         npm run build
+        dir bin
       displayName: test & build (back)
     - task: PublishBuildArtifacts@1
       inputs:
